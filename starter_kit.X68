@@ -1,7 +1,7 @@
     org $1000
 
 *-------------------------------------------------------
-*Choose to be Commander Sheppard or Reapers
+*Choose to be Evil Wizard or New Romancers
 *-------------------------------------------------------
 
 *-------------------------------------------------------
@@ -9,13 +9,13 @@
 *Add additional validation values as required
 *-------------------------------------------------------
 exit        EQU 0      used to exit assembly program
-min_fuel    EQU 100    min fuel requirement
-min_ship    EQU 1      min number of ships
-max_ship    EQU 9      max number of ships
-min_crew    EQU 6      min crew
-min_rate    EQU 1      min rate of fuel use based of speed
-max_rate    EQU 5      max rate e.g. Flank Speed       
-hit_point   EQU 5      points accumilated on enemy ship strike
+min_feed    EQU 100    min feed requirement
+min_horses  EQU 1      min number of horses
+max_horses  EQU 9      max number of horses
+min_soldier EQU 6      min soldiers
+min_charge  EQU 1      min rate of fuel use based of speed (oats for horses)
+max_charge  EQU 5      max rate e.g. Flank       
+hit_point   EQU 5      points accumilated on castle (objective) strike
 miss_point  EQU 8      points deducted for ordinace miss
 
 mine_loc    EQU 100    example for a hit
@@ -58,11 +58,11 @@ welcome:
 *---------Gameplay Input Values Subroutine--------------
 *-------------------------------------------------------    
 input:
-    bsr     fuel            branch to fuel input subroutine
-    bsr     ships           branch to ship input subroutine
-    bsr     rate            branch to rate (speed) input subroutine
+    bsr     feed            branch to feed input subroutine
+    bsr     horses          branch to ship input subroutine
+    bsr     rate            branch to rate (charging speed) input subroutine
     bsr     distance        branch to mission distance/location input subroutine
-    bsr     crew            branch to crew input subroutine
+    bsr     soldiers        branch to soldiers input subroutine
     rts
 
 *-------------------------------------------------------
@@ -108,35 +108,35 @@ draw:
     bsr     decorate
     rts
 *-------------------------------------------------------
-*-----------------------Ship Fuel-----------------------
-* Input the fuel load for each ship. Fuel costs money
+*-----------------------Horse feed-----------------------
+* Input the feed load for each horse. Feed costs money
 * For an advanced mark you need to manage this resource
 *------------------------------------------------------- 
-fuel:
+feed:
     bsr     endl
     bsr     decorate
-    lea     fuel_msg,A1
+    lea     feed_msg,A1
     move.b  #14,D0
     trap    #15
     bsr     decorate
     rts
 
 *-------------------------------------------------------
-*--------------------Ship Inventory---------------------
-* Number of ships to be allocated to a mission (flotilla)
+*--------------------Horses Inventory---------------------
+* Number of horses to be allocated to a mission 
 *------------------------------------------------------- 
-ships:
+horses:
     bsr     endl
     bsr     decorate
-    lea     ships_msg,A1
+    lea     horses_msg,A1
     move.b  #14,D0
     trap    #15
     bsr     decorate
     rts
 
 *-------------------------------------------------------
-*---------------------Ship(s) Speed---------------------
-* Ships speed to and from a mission (flotilla of ships)
+*-------------------Horse(s) Charge Speed---------------
+* horses speed to and from a mission
 *------------------------------------------------------- 
 rate:
     bsr     endl
@@ -149,7 +149,7 @@ rate:
 
 *-------------------------------------------------------
 *------------------Mission Distance---------------------
-* Distance to target or battle location
+* Distance to battle location
 *------------------------------------------------------- 
 distance:
     bsr     endl
@@ -161,13 +161,13 @@ distance:
     rts
 
 *-------------------------------------------------------
-*-----------------------Ships Crew----------------------
-* Number of crew onboard
+*-----------------------Soldiers----------------------
+* Number of soldiers
 *-------------------------------------------------------   
-crew:
+soldiers:
     bsr     endl
     bsr     decorate
-    lea     crew_msg,A1
+    lea     soldiers_msg,A1
     move.b  #14,D0
     trap    #15
     bsr     decorate
@@ -288,31 +288,31 @@ endl:
 crlf:           dc.b    $0D,$0A,0
 welcome_msg:    dc.b    '************************************************************'
                 dc.b    $0D,$0A
-                dc.b    'MASS Effect, command and conqure your fleet of ships'
+                dc.b    'ZorkQuest: Assault on Egreth Castle'
                 dc.b    $0D,$0A
                 dc.b    '************************************************************'
                 dc.b    $0D,$0A,0
-fuel_msg:       dc.b    'Fuel load (each ship needs at least 100 units of fuel)'
+feed_msg:       dc.b    'Feed load (each horse needs at least 100 units of feed)'
                 dc.b    $0D,$0A
-                dc.b    'Enter Fuel load : ',0
-ships_msg:      dc.b    'Number of mission ships : ',0
-rate_msg:       dc.b    'One Third[1], Two Thirds[2], Standard speed[3], ' 
+                dc.b    'Enter feed load : ',0
+horses_msg:      dc.b    'Number of horses : ',0
+rate_msg:       dc.b    'One Third[1], Two Thirds[2], Standard Charge[3], ' 
                 dc.b    $0D,$0A
-                dc.b    'Full Speed[4], Flank Speed[5] units fuel per click'
+                dc.b    'Full Charge[4], Flank Charge[5] units feed per click'
                 dc.b    $0D,$0A
                 dc.b    'Enter Speed : ',0
-distance_msg:   dc.b    'Mission distance e.g. 40 (with 100 units of fuel  '
+distance_msg:   dc.b    'Mission distance e.g. 40 (with 100 units of feed  '
                 dc.b    $0D,$0A
-                dc.b    'One Third speed 20 units remain for manuvouirs) ships '
+                dc.b    'One Third speed 20 units remain for manuvouirs) horses '
                 dc.b    $0D,$0A
-                dc.b    'without fuel are lost.'
+                dc.b    'Horses without feed are lost.'
                 dc.b    $0D,$0A
                 dc.b    'Enter mission distance : ',0
-crew_msg:       dc.b    'Each ships need at least 5 crew members and a Captain'
+soldiers_msg:       dc.b    'Each horses need at least 1 Knight and an Stable Hand'
                 dc.b    $0D,$0A
-                dc.b    'minimum requirement is 6 i.e. Captain x 1 and crew x 5.'
+                dc.b    'minimum requirement is 2 i.e. Stable Hand x 1 and Knight x 1.'
                 dc.b    $0D,$0A
-                dc.b    'Enter # of Crew : ',0
+                dc.b    'Enter # of soldiers : ',0
 gameplay_msg:   dc.b    'Add Gameplay !',0
 update_msg:     dc.b    'Update Gameplay !',0
 draw_msg:       dc.b    'Draw Screen !',0
