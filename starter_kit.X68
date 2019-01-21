@@ -1,7 +1,8 @@
     org $1000
 
 *-------------------------------------------------------
-*Choose to be Evil Wizard or New Romancers
+*Choose to be a Worker or a God 
+*https://www.avalon-rpg.com/
 *-------------------------------------------------------
 
 *-------------------------------------------------------
@@ -10,13 +11,11 @@
 *-------------------------------------------------------
 exit        EQU 0      used to exit assembly program
 min_feed    EQU 100    min feed requirement
-min_horses  EQU 1      min number of horses
-max_horses  EQU 9      max number of horses
-min_soldier EQU 6      min soldiers
-min_charge  EQU 1      min rate of fuel use based of speed (oats for horses)
-max_charge  EQU 5      max rate e.g. Flank       
-hit_point   EQU 5      points accumilated on castle (objective) strike
-miss_point  EQU 8      points deducted for ordinace miss
+min_potions EQU 1      min number of potions
+max_potions EQU 9      max number of potions
+min_weapons EQU 6      min weapons
+win_point   EQU 5      points accumilated on win
+lose_point  EQU 8      points deducted on a loss
 
 mine_loc    EQU 100    example for a hit
 
@@ -58,11 +57,8 @@ welcome:
 *---------Gameplay Input Values Subroutine--------------
 *-------------------------------------------------------    
 input:
-    bsr     feed            branch to feed input subroutine
-    bsr     horses          branch to ship input subroutine
-    bsr     rate            branch to rate (charging speed) input subroutine
-    bsr     distance        branch to mission distance/location input subroutine
-    bsr     soldiers        branch to soldiers input subroutine
+    bsr     potions         branch to potion input subroutine
+    bsr     weapons        branch to weaponss input subroutine
     rts
 
 *-------------------------------------------------------
@@ -82,9 +78,8 @@ gameloop:
     rts                     return from gameloop: subroutine
 
 *-------------------------------------------------------
-*---------------Update Mission Progress-----------------
-*  Move to battle location, engage enemy, fire and take
-*  fire, complete mission and return to base
+*----------------Update Quest Progress------------------
+*  Complete Quest
 *------------------------------------------------------- 
 update:
     bsr     endl            print a CR and LF
@@ -95,9 +90,9 @@ update:
     bsr     decorate
     rts
 *-------------------------------------------------------
-*---------------Draw Mission Updates--------------------
+*-----------------Draw Quest Updates--------------------
 * Draw the game progress information, status regarding
-* mission
+* quest
 *------------------------------------------------------- 
 draw:
     bsr     endl
@@ -108,73 +103,48 @@ draw:
     bsr     decorate
     rts
 *-------------------------------------------------------
-*-----------------------Horse feed-----------------------
-* Input the feed load for each horse. Feed costs money
-* For an advanced mark you need to manage this resource
+*------------------------Potions------------------------
+* Input the ingredients for each potion. Ingredients costs 
+* money. For an advanced mark you need to manage this 
+* resource
 *------------------------------------------------------- 
 feed:
     bsr     endl
     bsr     decorate
-    lea     feed_msg,A1
+    lea     potion_msg,A1
     move.b  #14,D0
     trap    #15
     bsr     decorate
     rts
 
 *-------------------------------------------------------
-*--------------------Horses Inventory---------------------
-* Number of horses to be allocated to a mission 
+*--------------------Potions Inventory---------------------
+* Number of potions to be used in a Quest 
 *------------------------------------------------------- 
-horses:
+potions:
     bsr     endl
     bsr     decorate
-    lea     horses_msg,A1
+    lea     potions_msg,A1
     move.b  #14,D0
     trap    #15
     bsr     decorate
     rts
 
 *-------------------------------------------------------
-*-------------------Horse(s) Charge Speed---------------
-* horses speed to and from a mission
-*------------------------------------------------------- 
-rate:
-    bsr     endl
-    bsr     decorate
-    lea     rate_msg,A1
-    move.b  #14,D0
-    trap    #15
-    bsr     decorate
-    rts
-
-*-------------------------------------------------------
-*------------------Mission Distance---------------------
-* Distance to battle location
-*------------------------------------------------------- 
-distance:
-    bsr     endl
-    bsr     decorate
-    lea     distance_msg,A1
-    move.b  #14,D0
-    trap    #15
-    bsr     decorate
-    rts
-
-*-------------------------------------------------------
-*-----------------------Soldiers----------------------
-* Number of soldiers
+*-------------------------Weapons-----------------------
+* Number of weapons
 *-------------------------------------------------------   
-soldiers:
+weapons:
     bsr     endl
     bsr     decorate
-    lea     soldiers_msg,A1
+    lea     weapons_msg,A1
     move.b  #14,D0
     trap    #15
     bsr     decorate
     rts
 
 *-------------------------------------------------------
-*---Game Play (Mission Progress, Battle Maneuvers)------
+*---Game Play (Quest Progress)--------------------------
 *------------------------------------------------------- 
 gameplay:
     bsr     endl
@@ -204,8 +174,8 @@ hud:
     rts
 
 *-------------------------------------------------------
-*-----------------------Taking Fire---------------------
-* This could be used for collision detection, if 
+*-----------------------Being Attacked------------------
+* This could be used for collision detection
 *-------------------------------------------------------
 collision:
     move.b  #mine_loc,D1
@@ -288,31 +258,19 @@ endl:
 crlf:           dc.b    $0D,$0A,0
 welcome_msg:    dc.b    '************************************************************'
                 dc.b    $0D,$0A
-                dc.b    'ZorkQuest: Assault on Egreth Castle'
+                dc.b    'Avalon: The Legend Lives'
                 dc.b    $0D,$0A
                 dc.b    '************************************************************'
                 dc.b    $0D,$0A,0
-feed_msg:       dc.b    'Feed load (each horse needs at least 100 units of feed)'
+potion_msg:     dc.b    'Feed load (each horse needs at least 100 units of feed)'
                 dc.b    $0D,$0A
                 dc.b    'Enter feed load : ',0
-horses_msg:      dc.b    'Number of horses : ',0
-rate_msg:       dc.b    'One Third[1], Two Thirds[2], Standard Charge[3], ' 
+potions_msg:    dc.b    'Number of potions : ',0
+weapons_msg:    dc.b    'Each quest need at least 2 Weapons'
                 dc.b    $0D,$0A
-                dc.b    'Full Charge[4], Flank Charge[5] units feed per click'
+                dc.b    'minimum requirement is 2 i.e. Sword x 1 and Speer x 1.'
                 dc.b    $0D,$0A
-                dc.b    'Enter Speed : ',0
-distance_msg:   dc.b    'Mission distance e.g. 40 (with 100 units of feed  '
-                dc.b    $0D,$0A
-                dc.b    'One Third speed 20 units remain for manuvouirs) horses '
-                dc.b    $0D,$0A
-                dc.b    'Horses without feed are lost.'
-                dc.b    $0D,$0A
-                dc.b    'Enter mission distance : ',0
-soldiers_msg:       dc.b    'Each horses need at least 1 Knight and an Stable Hand'
-                dc.b    $0D,$0A
-                dc.b    'minimum requirement is 2 i.e. Stable Hand x 1 and Knight x 1.'
-                dc.b    $0D,$0A
-                dc.b    'Enter # of soldiers : ',0
+                dc.b    'Enter # of weapons : ',0
 gameplay_msg:   dc.b    'Add Gameplay !',0
 update_msg:     dc.b    'Update Gameplay !',0
 draw_msg:       dc.b    'Draw Screen !',0
@@ -326,3 +284,7 @@ health:     ds.w    1
 score:      ds.w    1 reserve space for score
 
     end start
+*~Font name~Courier New~
+*~Font size~10~
+*~Tab type~1~
+*~Tab size~4~

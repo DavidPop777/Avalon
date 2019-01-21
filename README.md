@@ -1,10 +1,10 @@
 # README #
 
-Using Easy68K build a test based game based on ZorkQuest: Assault on Egreth Castle.
+Using Easy68K build a test based game based on Avalon: The Legend Lives.
 
 ### What is this repository for? ###
 
-* StarterKit for ZorkQuest: Assault on Egreth Castle
+* StarterKit for Avalon: The Legend Lives
 * Gameloop
 
 ### How do I get set up? ###
