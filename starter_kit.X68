@@ -1,4 +1,6 @@
-    org $1000
+* DavidPop777    hi
+
+org $1000
 
 *-------------------------------------------------------
 *Choose to be a Worker or a God 
@@ -284,6 +286,7 @@ health:     ds.w    1
 score:      ds.w    1 reserve space for score
 
     end start
+
 *~Font name~Courier New~
 *~Font size~10~
 *~Tab type~1~
